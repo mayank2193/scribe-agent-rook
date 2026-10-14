@@ -1,0 +1,28 @@
+local_id: F-005
+name: Index a completed incident when its session closes
+user_story: >-
+  As an incident operator, I close a conversation session after it has a completed incident record,
+  so that incident-scribe indexes the record in the incident corpus.
+expected_behaviour: >-
+  Closing a session containing a completed incident record sends that record to ops-directory
+  through index_incident and returns the indexing outcome.
+edge_cases:
+  - Indexing occurs when the caller closes the session, not merely when the assessment completes.
+  - The record includes session, service, severity, summary, symptoms, and resolution date.
+  - Indexing is a blocking operation.
+validation_rules:
+  - >-
+    The indexed payload must contain session, service, severity, summary, symptoms, and resolution
+    date.
+  - No indexing should occur for a needs_input result.
+calls:
+  - index_incident
+assumptions:
+  - The session contains a completed incident record when it is closed.
+  - The MCP server accepts the completed record schema.
+sources:
+  - 'agent manifest: calls[index_incident]'
+  - 'agent manifest: interface.accepts'
+  - 'agent manifest: declared.description'
+confidence: null
+known_data: []

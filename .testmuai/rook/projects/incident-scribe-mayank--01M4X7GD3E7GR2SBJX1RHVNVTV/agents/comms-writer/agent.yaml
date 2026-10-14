@@ -1,0 +1,59 @@
+local_id: comms-writer
+name: comms-writer
+parent: incident-scribe
+declared:
+  description: >-
+    A tool-less subagent that writes concise customer-facing Northwind incident status notes from
+    facts established by another agent.
+  name: comms-writer
+source:
+  kind: codebase
+  tracks:
+    - README.md
+    - docs/invoking.md
+    - incident_scribe/__main__.py
+    - incident_scribe/agent.py
+    - incident_scribe/agent.py:COMMS_SYSTEM
+    - incident_scribe/agent.py:run_turn
+    - incident_scribe/llm.py
+    - services/ops-directory.mjs
+    - test_incident_scribe.py
+  subtree_digest: 97247be77177a489602c0ff4878a290904e0ca133f764e58c649ce74c6f53072
+framework:
+  evidence: >-
+    incident_scribe/agent.py:COMMS_SYSTEM and run_turn call llm.call directly without an agent
+    framework
+  name: custom
+interface:
+  accepts:
+    - >-
+      A JSON facts payload containing assessment, service, tier, owning_team, runbook_url, and
+      on_call
+  entry: incident_scribe/agent.py:run_turn
+  intake: structured
+  out_of_scope:
+    - Looking up services or incidents
+    - Assigning incident severity or independently assessing an incident
+    - Taking operational actions or calling external tools
+  produces: >-
+    A concise customer-facing status note returned to incident-scribe for inclusion in the response
+    and artifact file.
+  transport: subagent
+limits: {}
+guardrails:
+  - Write only about facts supplied by the parent; do not look anything up.
+  - Use plain language and omit internal jargon, team names, and severity codes.
+  - Do not include internal URLs, runbook links, or on-call email addresses.
+  - Limit apologies to one clause and do not promise timing that was not supplied.
+  - Produce a short three- or four-sentence customer-facing note.
+assumptions:
+  - >-
+    The parent incident-scribe supplies the assessment and service facts; comms-writer does not
+    independently verify them.
+  - >-
+    Any session continuity belongs to the parent session. Each comms-writer invocation receives a
+    fresh system prompt and facts payload and has no memory of prior note-writing calls.
+  - The model provider used by llm.call is configured externally and is not fixed by this subagent.
+default_subagent: null
+calls: []
+approval_gates: []

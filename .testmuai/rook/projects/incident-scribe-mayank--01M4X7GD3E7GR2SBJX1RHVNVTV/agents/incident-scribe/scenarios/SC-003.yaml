@@ -1,0 +1,57 @@
+local_id: SC-003
+title: Index completed incident record on session close via index_incident MCP call
+feature_id: F-005
+feature_revision_id: sha256:ee5c0cd592ca2ecb70c6e2a988d3f208b4ec7ecaf858d7b9c70b8380eaa4990f
+goal: Close session S-1 containing the completed incident record for search-indexer service degradation.
+input_kind: text
+acceptance_criteria:
+  - statement: >-
+      The response confirms that the completed incident record for session S-1 was successfully
+      indexed.
+    check: llm_judge
+  - statement: >-
+      The index_incident MCP tool is called with a payload containing the session, service,
+      severity, summary, symptoms, and resolution date.
+    check: llm_judge
+  - statement: The output does not contain internal runbook URLs or on-call email addresses.
+    check: regex
+    params:
+      pattern: ^((?!https?://[\w.-]+/runbook|[a-zA-Z0-9._%+-]+@[\w.-]+\.[a-zA-Z]{2,}).)*$
+forbidden:
+  - runbook
+  - on-call email
+why: >-
+  catches failure to invoke the index_incident tool or omitting required payload fields when closing
+  an incident session
+confidence: high
+verification_requires: []
+attachments: []
+preconditions:
+  - Session S-1 exists with a completed incident record for search-indexer service.
+output_kind: json
+exercises:
+  tools:
+    - index_incident
+  subagents: []
+  services:
+    - search-indexer
+calls:
+  - tool: index_incident
+    expect: called
+multi_turn: false
+setup_messages: []
+max_turns: null
+timeout_seconds: null
+tags:
+  - integration
+  - mcp
+  - indexing
+  - session-close
+class: functional
+category: integration
+redteam: null
+executable: true
+skip_reason: null
+excluded: false
+origin: generated
+sources: []

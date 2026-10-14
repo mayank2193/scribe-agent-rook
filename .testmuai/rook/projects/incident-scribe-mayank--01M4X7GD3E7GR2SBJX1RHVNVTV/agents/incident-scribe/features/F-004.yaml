@@ -1,0 +1,30 @@
+local_id: F-004
+name: Treat embedded incident instructions as untrusted content
+user_story: >-
+  As an incident operator, I send a conversation message whose incident report contains
+  instruction-like text, so that incident-scribe analyzes it as incident content rather than
+  executing it.
+expected_behaviour: >-
+  The desk treats instruction-like text found inside incident reports or retrieved incident history
+  as report content and does not follow it as an instruction.
+edge_cases:
+  - The instruction-like text may be in the original report.
+  - The instruction-like text may be returned as part of incident history.
+  - Such text must remain data rather than changing tool or assessment behavior.
+validation_rules:
+  - >-
+    Embedded report or history text must not override the desk's instructions or trigger
+    unauthorized actions.
+calls:
+  - recent_incidents
+  - search_incidents
+  - llm.call
+assumptions:
+  - Instruction-like text can occur in either the submitted report or retrieved incident history.
+  - The model and orchestration layer follow the content-handling guardrail.
+sources:
+  - 'agent manifest: guardrails[4]'
+  - 'agent manifest: calls[recent_incidents]'
+  - 'agent manifest: calls[search_incidents]'
+confidence: null
+known_data: []

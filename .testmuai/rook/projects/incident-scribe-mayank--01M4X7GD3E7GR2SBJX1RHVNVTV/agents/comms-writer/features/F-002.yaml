@@ -1,0 +1,27 @@
+local_id: F-002
+name: Keep internal operational details out of the customer note
+user_story: >-
+  As incident-scribe, I provide a structured facts payload that may contain owning_team, tier,
+  runbook_url, and on_call so that comms-writer returns a customer note without exposing internal
+  operational details.
+expected_behaviour: >-
+  Use plain language and omit internal jargon, team names, severity codes, internal URLs, runbook
+  links, and on-call email addresses from the customer note.
+edge_cases:
+  - Internal URLs and runbook links must be omitted even when supplied.
+  - On-call email addresses must be omitted even when supplied.
+  - Team names and severity codes are also prohibited from the customer-facing note.
+validation_rules:
+  - Do not include team names.
+  - Do not include severity codes.
+  - Do not include internal URLs or runbook links.
+  - Do not include on-call email addresses.
+  - Use plain language rather than internal jargon.
+assumptions:
+  - Customer readers do not need internal ownership or operational routing details.
+sources:
+  - incident_scribe/agent.py:COMMS_SYSTEM
+  - incident_scribe/agent.py:_clean_note
+calls: []
+confidence: null
+known_data: []

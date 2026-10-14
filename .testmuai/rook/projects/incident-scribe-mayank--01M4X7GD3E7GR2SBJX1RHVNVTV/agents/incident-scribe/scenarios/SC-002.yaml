@@ -1,0 +1,58 @@
+local_id: SC-002
+title: Unplaceable incident report returns needs_input without assigning severity or creating artifacts
+feature_id: F-003
+feature_revision_id: sha256:40bc0789d87b90c6e795819afa67820d5ae9ce7a10156c85e767b407a6efd30e
+goal: System is experiencing an issue and performance seems affected. Please assist with this alert.
+input_kind: text
+acceptance_criteria:
+  - statement: The response status or result indicates needs_input state requesting symptom or impact details
+    check: regex
+    params:
+      pattern: needs_input
+  - statement: The response states a question asking for clarification on symptom or impact details
+    check: llm_judge
+  - statement: The response does not state a severity assignment such as S1, S2, or S3
+    check: regex
+    params:
+      pattern: ^((?!\b(S1|S2|S3)\b)[\s\S])*$
+  - statement: The response does not include paths for generated customer-note or incident-record artifacts
+    check: llm_judge
+forbidden:
+  - S1
+  - S2
+  - S3
+  - customer-note
+  - incident-record
+why: >-
+  Catches when an unplaceable report incorrectly receives an S1-S3 severity assignment and produces
+  downstream artifacts instead of requesting missing information.
+confidence: high
+verification_requires: []
+attachments: []
+preconditions:
+  - A valid SCRIBE_API_TOKEN is provided and session S-1 is open.
+output_kind: json
+exercises:
+  tools: []
+  subagents: []
+  services: []
+calls:
+  - tool: comms-writer
+    expect: not_called
+multi_turn: false
+setup_messages: []
+max_turns: 2
+timeout_seconds: null
+tags:
+  - guardrails
+  - unplaceable-report
+  - severity-matrix
+  - FI-001
+class: functional
+category: negative
+redteam: null
+executable: true
+skip_reason: null
+excluded: false
+origin: generated
+sources: []

@@ -1,0 +1,22 @@
+- severity: high
+  what: >-
+    The implementation does not reliably enforce that an unplaceable report receives a question
+    instead of a severity.
+  where: incident_scribe/agent.py:run_turn and _policy_severity
+  why: >-
+    The final guard only changes a completed result to needs_input when the model supplied no
+    severity or when the limited keyword-based policy helper detects a contradiction. A model can
+    return a completed S1-S3 assessment for a report with no recognizable symptom, causing artifacts
+    and an indexed record to be produced despite the policy.
+  id: FI-001
+- severity: high
+  what: >-
+    Follow-up executes can reuse a persisted service record and severity without performing the
+    required lookup during that task.
+  where: incident_scribe/agent.py:run_turn, prior_record/service_record handling
+  why: >-
+    The policy requires ownership, tier, and on-call attribution to come from the ops directory
+    during the task, but follow-up turns intentionally carry forward the prior record and can
+    complete without calling lookup_service. A changed directory entry or a follow-up about a
+    different service can therefore receive stale attribution and artifacts.
+  id: FI-002

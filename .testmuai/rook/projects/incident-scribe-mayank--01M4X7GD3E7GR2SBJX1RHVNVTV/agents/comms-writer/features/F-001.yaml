@@ -1,0 +1,32 @@
+local_id: F-001
+name: Write a customer-facing incident status note from supplied facts
+user_story: >-
+  As incident-scribe, I provide a structured facts payload with assessment, service, tier,
+  owning_team, runbook_url, and on_call so that comms-writer returns a customer-facing incident
+  status note.
+expected_behaviour: >-
+  Given a structured JSON facts payload containing assessment, service, tier, owning_team,
+  runbook_url, and on_call, produce a concise customer-facing Northwind incident status note for
+  return to incident-scribe.
+edge_cases:
+  - >-
+    The payload may include internal team names, severity codes, runbook URLs, and on-call email
+    addresses that must not appear in the customer note.
+  - The supplied facts may not include a timing estimate or an apology-relevant circumstance.
+validation_rules:
+  - The note must be based only on the supplied facts.
+  - The output is prose intended for inclusion in incident-scribe's response and artifact.
+assumptions:
+  - >-
+    The parent supplies accurate assessment and service facts; comms-writer does not verify them
+    independently.
+  - The model follows the system prompt when generating the note.
+sources:
+  - incident_scribe/agent.py:COMMS_SYSTEM
+  - incident_scribe/agent.py:run_turn
+  - incident_scribe/agent.py
+  - README.md
+  - docs/invoking.md
+calls: []
+confidence: null
+known_data: []

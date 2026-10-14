@@ -1,0 +1,27 @@
+local_id: F-001
+name: Authenticate and access an incident session
+user_story: >-
+  As an incident operator, I submit a conversation turn to `python3 -m incident_scribe execute
+  --token "$SCRIBE_API_TOKEN" --session-id S-1` so that the desk processes my report in the correct
+  persisted session.
+expected_behaviour: >-
+  The CLI rejects commands with a missing or incorrect SCRIBE_API_TOKEN before accessing the
+  requested session; authenticated execution accepts an incident report or follow-up message.
+edge_cases:
+  - Missing or incorrect token must be rejected before session access.
+  - A valid token may be supplied with --token or SCRIBE_API_TOKEN.
+  - Execution requires a previously opened session identified by --session-id.
+validation_rules:
+  - A session id must be supplied.
+  - The token must be valid and supplied through --token or SCRIBE_API_TOKEN.
+assumptions:
+  - The configured LLM and live MCP server are available and follow the repository prompts.
+  - A caller has already opened the session before executing a turn.
+sources:
+  - 'agent manifest: interface.entry'
+  - 'agent manifest: interface.accepts'
+  - 'agent manifest: guardrails[0]'
+known_data:
+  - S-1
+calls: []
+confidence: null

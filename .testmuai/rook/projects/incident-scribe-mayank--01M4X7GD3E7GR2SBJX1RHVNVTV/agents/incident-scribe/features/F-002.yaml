@@ -1,0 +1,50 @@
+local_id: F-002
+name: Assess a placed incident and draft its customer update
+user_story: >-
+  As an incident operator, I send an incident report as a conversation message describing an
+  affected service, symptoms, and impact, so that incident-scribe verifies ownership, researches
+  related incidents, assigns severity, and returns a customer-safe status note.
+expected_behaviour: >-
+  For a new incident report, the desk obtains authoritative service ownership, tier, on-call
+  address, runbook and image URLs from lookup_service; reviews service history with
+  recent_incidents; searches the incident corpus with search_incidents; assigns severity using the
+  severity matrix; and obtains a three- or four-sentence customer-facing note from comms-writer
+  before returning a completed response and artifacts.
+edge_cases:
+  - The history search may use an optional result limit.
+  - Similarity search may use an optional service filter and result limit.
+  - >-
+    The customer note must not expose internal runbook URLs, on-call email addresses, internal
+    hostnames, or severity codes.
+  - >-
+    The completed response includes assessment, customer note, service metadata, severity, calls,
+    artifact paths, image URLs, usage, and metrics.
+validation_rules:
+  - Owning team, tier, and on-call address may only be stated after lookup_service returns them.
+  - Severity must use the severity matrix.
+  - The customer note must exclude internal operational details.
+  - Tool names, argument types, and history-search limits are validated before MCP dispatch.
+calls:
+  - lookup_service
+  - recent_incidents
+  - search_incidents
+  - llm.call
+assumptions:
+  - The report identifies an affected service sufficiently for directory lookup.
+  - The model emits valid tool names, argument types, and search limits.
+  - The configured LLM and MCP service are available.
+sources:
+  - 'agent manifest: declared.description'
+  - 'agent manifest: produces'
+  - 'agent manifest: calls[lookup_service]'
+  - 'agent manifest: calls[recent_incidents]'
+  - 'agent manifest: calls[search_incidents]'
+  - 'agent manifest: calls[comms-writer]'
+  - 'agent manifest: guardrails[1]'
+  - 'agent manifest: guardrails[2]'
+  - 'agent manifest: guardrails[5]'
+known_data:
+  - S1
+  - S2
+  - S3
+confidence: null

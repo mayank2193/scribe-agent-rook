@@ -1,0 +1,9 @@
+- severity: medium
+  what: The customer-boundary and factuality rules are only partially enforced after generation.
+  where: incident_scribe/agent.py:_clean_note
+  why: >-
+    The cleanup removes configured runbook/on-call values, URLs, internal hostnames, and S1-S3
+    codes, but it does not enforce the prohibition on team names or internal jargon, verify that
+    every statement came from the supplied facts, or enforce the three-to-four-sentence and
+    timing/apology rules.
+  id: FI-001

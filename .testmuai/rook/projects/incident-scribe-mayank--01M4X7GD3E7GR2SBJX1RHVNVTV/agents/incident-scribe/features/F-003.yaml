@@ -1,0 +1,37 @@
+local_id: F-003
+name: Request missing symptom and impact for an unplaceable report
+user_story: >-
+  As an incident operator, I send a conversation message containing an incident report that does not
+  provide a recognizable symptom or impact, so that incident-scribe asks for the missing information
+  instead of issuing a severity assessment.
+expected_behaviour: >-
+  When the report cannot be placed using the severity matrix, the desk asks for a symptom and impact
+  and returns needs_input instead of completing an assessment or assigning severity.
+edge_cases:
+  - >-
+    A report with no usable symptom or impact should request more information rather than assign
+    severity.
+  - The implementation may fail to enforce this branch when the model invents an S1-S3 severity.
+  - No customer-note or incident-record artifacts should be created for needs_input.
+validation_rules:
+  - A needs_input result must not create customer-note or incident-record artifacts.
+  - A severity should not be assigned when the report cannot be placed.
+calls:
+  - lookup_service
+  - llm.call
+assumptions:
+  - The report can be evaluated for whether its symptom and impact place it in the severity matrix.
+  - The model does not incorrectly return a completed severity despite insufficient information.
+sources:
+  - 'agent manifest: guardrails[2]'
+  - 'agent manifest: guardrails[6]'
+  - 'agent manifest: calls[lookup_service]'
+  - 'agent manifest: calls[comms-writer]'
+  - >-
+    analyse already thinks is wrong: severity high, incident_scribe/agent.py:run_turn and
+    _policy_severity
+known_data:
+  - S1
+  - S2
+  - S3
+confidence: null

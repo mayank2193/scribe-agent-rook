@@ -1,0 +1,21 @@
+local_id: F-004
+name: Limit the status note to three or four sentences
+user_story: >-
+  As incident-scribe, I provide the incident facts payload so that comms-writer returns a short
+  customer-facing status note of three or four sentences.
+expected_behaviour: Produce a short customer-facing note consisting of three or four sentences.
+edge_cases:
+  - >-
+    The note should remain short while still communicating the supplied assessment and service
+    facts.
+  - Both three-sentence and four-sentence notes satisfy the stated limit.
+validation_rules:
+  - The generated note must contain three or four sentences.
+assumptions:
+  - Sentence count is measured on the generated customer-facing note.
+sources:
+  - incident_scribe/agent.py:COMMS_SYSTEM
+  - incident_scribe/agent.py:_clean_note
+calls: []
+confidence: null
+known_data: []

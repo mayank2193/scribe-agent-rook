@@ -1,0 +1,20 @@
+local_id: F-003
+name: Avoid unsupported timing promises and excessive apologies
+user_story: >-
+  As incident-scribe, I provide a structured facts payload so that comms-writer communicates only
+  supplied timing information and uses at most one apology clause in the customer note.
+expected_behaviour: Do not make unsupported timing promises, and limit any apology to one clause.
+edge_cases:
+  - No timing promise should be added when the payload supplies no timing.
+  - An apology may be omitted; if included, it must not exceed one clause.
+validation_rules:
+  - Do not promise timing that was not supplied in the facts.
+  - Apologies are limited to one clause.
+assumptions:
+  - Only timing information explicitly present in the supplied facts may be communicated.
+sources:
+  - incident_scribe/agent.py:COMMS_SYSTEM
+  - incident_scribe/agent.py:_clean_note
+calls: []
+confidence: null
+known_data: []
